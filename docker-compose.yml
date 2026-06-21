@@ -76,18 +76,26 @@ services:
   pgadmin:
     image: dpage/pgadmin4:latest
     restart: unless-stopped
+    user: root
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        cp /pgpass-src /pgpass
+        chown 5050:5050 /pgpass
+        chmod 600 /pgpass
+        exec /entrypoint.sh
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@local.dev
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGPASSFILE: /pgpass
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - pgadmin_data:/var/lib/pgadmin
       - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
-      - ./docker/pgadmin/pgpass:/pgpass:ro
+      - ./docker/pgadmin/pgpass:/pgpass-src:ro
 
 volumes:
   postgres_data:
