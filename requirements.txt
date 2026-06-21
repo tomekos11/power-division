@@ -1,0 +1,30 @@
+Wymagania techniczne i środowisko
+Framework: Aplikacja Laravel.
+
+Repozytorium: Kod umieszczony w publicznym repozytorium. Należy zachować pełną historię commitów obrazującą przebieg pracy. Plik .env.example powinien zawierać poprawną konfigurację do uruchomienia lokalnego.
+
+Konteneryzacja: Projekt musi zawierać plik docker-compose.yml umożliwiający uruchomienie całego środowiska.
+
+Funkcjonalność i logika biznesowa
+Endpoint: Utwórz endpoint, który będzie obciążać/doładować konto użytkownika.
+
+Baza danych: Jako bazę danych do obsługi salda i transakcji należy wykorzystać Redis/Postgres.
+
+Symulacja płatności: W logice procesu należy zastosować sleep(5).
+
+Warunek krytyczny: Saldo konta nie może być ujemne.
+
+Walidacja i błędy: Aplikacja musi zawierać walidację danych wejściowych oraz kompletną obsługę błędów.
+
+Jakość kodu: Projekt musi uwzględniać czytelną organizację kodu oraz dobre praktyki programistyczne (bez wykorzystywania fasad)
+
+Logowanie: Aplikacja musi logować do /dev/stdout każdy response w formacie: {metoda} {uri} {contentType} {statusCode} {responseTime}.
+
+Format odpowiedzi (JSON)
+W odpowiedzi z endpointu należy zwrócić obiekt JSON zawierający:
+
+Aktualny stan konta
+
+Identyfikator użytkownika
+
+Datę ostatniej transakcji w formacie Zulu
