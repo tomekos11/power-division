@@ -1,5 +1,7 @@
 <?php
 
+use Spatie\Health\ResultStores\InMemoryHealthResultStore;
+
 return [
 
     /*
@@ -21,7 +23,7 @@ return [
     */
 
     'result_stores' => [
-        Spatie\Health\ResultStores\InMemoryHealthResultStore::class,
+        InMemoryHealthResultStore::class,
     ],
 
     /*
