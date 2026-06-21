@@ -7,16 +7,22 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "knuckleswtf/scribe": "^5.0",
         "laravel/framework": "^13.8",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "sentry/sentry-laravel": "^4.13",
+        "spatie/laravel-data": "^4.17",
+        "spatie/laravel-health": "^1.34"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^12.5.12"
     },
     "autoload": {
@@ -47,6 +53,18 @@
         "test": [
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"
+        ],
+        "analyse": [
+            "vendor/bin/phpstan analyse --memory-limit=512M"
+        ],
+        "format": [
+            "vendor/bin/pint"
+        ],
+        "format:test": [
+            "vendor/bin/pint --test"
+        ],
+        "docs": [
+            "@php artisan scribe:generate"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
