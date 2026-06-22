@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Contracts\AccountLockManager;
+use App\Contracts\Repositories\AccountRepository;
+use App\Repositories\DatabaseAccountRepository;
+use App\Services\AccountTransactionService;
 use App\Services\RedisAccountLockManager;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
             ->give(fn ($app) => $app->make('redis')->connection());
 
         $this->app->singleton(AccountLockManager::class, RedisAccountLockManager::class);
+
+        $this->app->singleton(AccountRepository::class, DatabaseAccountRepository::class);
+
+        $this->app->when(AccountTransactionService::class)
+            ->needs('$paymentSimulationSeconds')
+            ->give(fn () => (int) config('account.payment_simulation_seconds', 5));
     }
 
     /**

@@ -9,8 +9,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
-#[Fillable(['user_id', 'balance'])]
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $balance
+ * @property int $last_fence
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ */
+#[Fillable(['user_id', 'balance', 'last_fence'])]
 class Account extends Model
 {
     /** @use HasFactory<AccountFactory> */
@@ -23,6 +33,7 @@ class Account extends Model
     {
         return [
             'balance' => 'decimal:2',
+            'last_fence' => 'integer',
             'deleted_at' => 'datetime',
         ];
     }

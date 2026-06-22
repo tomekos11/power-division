@@ -35,7 +35,7 @@ done
 echo "Redis is ready."
 
 mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
-chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
+chmod -R a+rwx storage bootstrap/cache 2>/dev/null || true
 
 if [ ! -f .env ] && [ -f .env.example ]; then
     cp .env.example .env

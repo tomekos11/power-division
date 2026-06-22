@@ -1,5 +1,10 @@
 <?php
 
+use App\Exceptions\AccountLockTimeoutException;
+use App\Exceptions\AccountLockUnavailableException;
+use App\Exceptions\AccountNotFoundException;
+use App\Exceptions\InsufficientBalanceException;
+use App\Exceptions\StaleFenceException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,4 +23,34 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
+        $exceptions->render(function (AccountNotFoundException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => $e->getMessage()], 404);
+            }
+        });
+
+        $exceptions->render(function (InsufficientBalanceException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+        });
+
+        $exceptions->render(function (StaleFenceException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => $e->getMessage()], 409);
+            }
+        });
+
+        $exceptions->render(function (AccountLockUnavailableException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => $e->getMessage()], 503);
+            }
+        });
+
+        $exceptions->render(function (AccountLockTimeoutException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => $e->getMessage()], 504);
+            }
+        });
     })->create();

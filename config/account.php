@@ -11,4 +11,6 @@ return [
         'retry_interval_ms' => (int) env('ACCOUNT_LOCK_RETRY_MS', 100),
     ],
 
+    'payment_simulation_seconds' => (int) env('ACCOUNT_PAYMENT_SIMULATION_SECONDS', 5),
+
 ];
