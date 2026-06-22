@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\AccountLockManager;
+use App\Services\RedisAccountLockManager;
+use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
@@ -16,7 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->when(RedisAccountLockManager::class)
+            ->needs(PhpRedisConnection::class)
+            ->give(fn ($app) => $app->make('redis')->connection());
+
+        $this->app->singleton(AccountLockManager::class, RedisAccountLockManager::class);
     }
 
     /**
