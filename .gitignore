@@ -16,6 +16,7 @@
 /node_modules
 /public/build
 /public/docs
+/.scribe
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage

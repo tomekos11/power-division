@@ -52,6 +52,7 @@ health:
 setup:
 	cp -n .env.example .env 2>/dev/null || true
 	$(MAKE) up
+	$(MAKE) fresh
 	@echo ""
 	@echo "API:           http://localhost:$${APP_PORT:-8080}"
 	@echo "Health:        http://localhost:$${APP_PORT:-8080}/api/health"
