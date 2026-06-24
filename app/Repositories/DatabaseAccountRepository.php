@@ -8,15 +8,14 @@ use App\Exceptions\InsufficientBalanceException;
 use App\Exceptions\StaleFenceException;
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 final class DatabaseAccountRepository implements AccountRepository
 {
-    public function findActiveByUserId(int $userId): ?Account
+    public function findActiveForUser(User $user): ?Account
     {
-        return Account::query()
-            ->where('user_id', $userId)
-            ->first(['id']);
+        return $user->account()->first(['id']);
     }
 
     public function applyTransaction(Account $account, string $amount, int $fenceToken): AppliedTransaction

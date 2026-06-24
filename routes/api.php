@@ -6,4 +6,4 @@ use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
 
 Route::get('health', HealthCheckJsonResultsController::class);
 
-Route::post('users/{userId}/transactions', [AccountTransactionController::class, 'store']);
+Route::post('users/{user}/transactions', [AccountTransactionController::class, 'store']);

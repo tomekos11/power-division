@@ -6,6 +6,7 @@ use App\Contracts\AccountLockManager;
 use App\Contracts\Repositories\AccountRepository;
 use App\Data\AccountStateData;
 use App\Exceptions\AccountNotFoundException;
+use App\Models\User;
 
 final class AccountTransactionService
 {
@@ -15,23 +16,23 @@ final class AccountTransactionService
         private readonly int $paymentSimulationSeconds,
     ) {}
 
-    public function process(int $userId, string $amount): AccountStateData
+    public function process(User $user, string $amount): AccountStateData
     {
-        $account = $this->accounts->findActiveByUserId($userId);
+        $account = $this->accounts->findActiveForUser($user);
 
         if ($account === null) {
-            throw new AccountNotFoundException($userId);
+            throw new AccountNotFoundException($user);
         }
 
         return $this->lockManager->withAccountLock(
             $account->id,
-            function (int $fenceToken) use ($account, $userId, $amount): AccountStateData {
+            function (int $fenceToken) use ($account, $user, $amount): AccountStateData {
                 sleep($this->paymentSimulationSeconds);
 
                 $applied = $this->accounts->applyTransaction($account, $amount, $fenceToken);
 
                 return new AccountStateData(
-                    userId: $userId,
+                    userId: $user->id,
                     balance: $applied->balance,
                     lastTransactionAt: $applied->createdAt,
                 );

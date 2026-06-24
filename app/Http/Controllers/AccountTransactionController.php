@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTransactionRequest;
+use App\Models\User;
 use App\Services\AccountTransactionService;
 use Illuminate\Http\JsonResponse;
 
@@ -12,9 +13,9 @@ final class AccountTransactionController extends Controller
         private readonly AccountTransactionService $transactions,
     ) {}
 
-    public function store(StoreTransactionRequest $request, int $userId): JsonResponse
+    public function store(StoreTransactionRequest $request, User $user): JsonResponse
     {
-        $state = $this->transactions->process($userId, $request->validated('amount'));
+        $state = $this->transactions->process($user, $request->validated('amount'));
 
         return response()->json($state->toArray());
     }
