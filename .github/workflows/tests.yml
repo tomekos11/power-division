@@ -23,6 +23,42 @@ jobs:
 
     name: PHP ${{ matrix.php }}
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: power_division_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U app -d power_division_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      APP_KEY: base64:2fl+KtvkdphvQyEfm3qXy4gqLx8xJ0V7Z6kJ+6hzzVo=
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: power_division_test
+      DB_USERNAME: app
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -31,17 +67,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_pgsql, redis
           coverage: none
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Copy environment file
-        run: cp .env.example .env
-
-      - name: Generate app key
-        run: php artisan key:generate
+      - name: Prepare environment
+        run: cp .env.testing .env
 
       - name: Execute tests
         run: php artisan test
