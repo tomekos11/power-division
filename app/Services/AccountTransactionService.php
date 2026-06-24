@@ -31,7 +31,7 @@ final class AccountTransactionService
                 $applied = $this->accounts->applyTransaction($account, $amount, $fenceToken);
 
                 return new AccountStateData(
-                    user_id: $userId,
+                    userId: $userId,
                     balance: $applied->balance,
                     lastTransactionAt: $applied->createdAt,
                 );

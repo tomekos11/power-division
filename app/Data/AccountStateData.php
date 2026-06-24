@@ -14,7 +14,8 @@ use Spatie\LaravelData\Transformers\DateTimeInterfaceTransformer;
 class AccountStateData extends Data
 {
     public function __construct(
-        public int $user_id,
+        #[MapOutputName('user_id')]
+        public int $userId,
         public string $balance,
         #[MapOutputName('last_transaction_at')]
         #[WithTransformer(DateTimeInterfaceTransformer::class, format: 'Y-m-d\TH:i:s\Z')]

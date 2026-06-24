@@ -14,7 +14,7 @@ final class AccountTransactionController extends Controller
 
     public function store(StoreTransactionRequest $request, int $userId): JsonResponse
     {
-        $state = $this->transactions->process($userId, $request->string('amount')->toString());
+        $state = $this->transactions->process($userId, $request->validated('amount'));
 
         return response()->json($state->toArray());
     }
