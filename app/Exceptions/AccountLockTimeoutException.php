@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use RuntimeException;
-
-final class AccountLockTimeoutException extends RuntimeException
+final class AccountLockTimeoutException extends BusinessException
 {
     public function __construct(
         public readonly int $accountId,

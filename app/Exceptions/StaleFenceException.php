@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use RuntimeException;
-
-final class StaleFenceException extends RuntimeException
+final class StaleFenceException extends BusinessException
 {
     public function __construct(public readonly int $accountId)
     {

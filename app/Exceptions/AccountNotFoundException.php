@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use RuntimeException;
-
-final class AccountNotFoundException extends RuntimeException
+final class AccountNotFoundException extends BusinessException
 {
     public function __construct(public readonly int $userId)
     {

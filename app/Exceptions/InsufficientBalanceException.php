@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use RuntimeException;
-
-final class InsufficientBalanceException extends RuntimeException
+final class InsufficientBalanceException extends BusinessException
 {
     public function __construct(public readonly int $accountId)
     {

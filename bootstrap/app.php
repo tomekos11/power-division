@@ -5,6 +5,7 @@ use App\Exceptions\AccountLockUnavailableException;
 use App\Exceptions\AccountNotFoundException;
 use App\Exceptions\InsufficientBalanceException;
 use App\Exceptions\StaleFenceException;
+use App\Http\Middleware\LogResponseMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->append(LogResponseMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

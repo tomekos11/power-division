@@ -20,6 +20,29 @@ until php -r "
 done
 echo "PostgreSQL is ready."
 
+TEST_DB="${DB_DATABASE}_test"
+export TEST_DB
+
+echo "Ensuring test database exists (${TEST_DB})..."
+php -r "
+    \$testDb = getenv('TEST_DB');
+    if (! preg_match('/^[a-zA-Z0-9_]+$/', \$testDb)) {
+        throw new InvalidArgumentException('Invalid test database name.');
+    }
+    try {
+        \$pdo = new PDO(
+            'pgsql:host=' . getenv('DB_HOST') . ';port=' . (getenv('DB_PORT') ?: '5432') . ';dbname=postgres',
+            getenv('DB_USERNAME'),
+            getenv('DB_PASSWORD')
+        );
+        \$pdo->exec('CREATE DATABASE ' . \$testDb);
+    } catch (Throwable \$e) {
+        if (! str_contains(\$e->getMessage(), 'already exists')) {
+            throw \$e;
+        }
+    }
+"
+
 echo "Waiting for Redis..."
 until php -r "
     try {
