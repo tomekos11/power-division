@@ -16,7 +16,7 @@ final class DatabaseAccountRepository implements AccountRepository
     {
         return Account::query()
             ->where('user_id', $userId)
-            ->first();
+            ->first(['id']);
     }
 
     public function applyTransaction(Account $account, string $amount, int $fenceToken): AppliedTransaction
@@ -41,7 +41,9 @@ final class DatabaseAccountRepository implements AccountRepository
                 $this->rejectUpdate($account->id, $amount, $fenceToken);
             }
 
-            $balanceAfter = (string) $account->refresh()->balance;
+            $balanceAfter = (string) Account::query()
+                ->whereKey($account->id)
+                ->value('balance');
 
             Transaction::query()->create([
                 'account_id' => $account->id,
