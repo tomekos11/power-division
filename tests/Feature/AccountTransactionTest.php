@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Models\Account;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CleansAccountLockRedisKeys;
 use Tests\TestCase;
 
 class AccountTransactionTest extends TestCase
 {
+    use CleansAccountLockRedisKeys;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -19,11 +21,16 @@ class AccountTransactionTest extends TestCase
             $this->markTestSkipped('Redis is not available.');
         }
 
-        config([
-            'account.payment_simulation_seconds' => 0,
-            'account.lock.prefix' => 'account-lock-test-'.getmypid(),
-            'account.lock.fence_prefix' => 'account-lock-fence-test-'.getmypid(),
-        ]);
+        $this->configureTestLockPrefixes();
+        config(['account.payment_simulation_seconds' => 0]);
+        $this->cleanupAccountLockRedisKeys();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->cleanupAccountLockRedisKeys();
+
+        parent::tearDown();
     }
 
     public function test_credit_increases_balance(): void

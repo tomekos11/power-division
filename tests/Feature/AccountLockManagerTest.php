@@ -9,17 +9,16 @@ use App\Services\RedisAccountLockManager;
 use Illuminate\Redis\Connections\PhpRedisConnection;
 use InvalidArgumentException;
 use Symfony\Component\Process\Process;
+use Tests\Concerns\CleansAccountLockRedisKeys;
 use Tests\TestCase;
 
 class AccountLockManagerTest extends TestCase
 {
+    use CleansAccountLockRedisKeys;
+
     private AccountLockManager $lockManager;
 
     private PhpRedisConnection $redis;
-
-    private string $lockPrefix;
-
-    private string $fencePrefix;
 
     /** @var list<int> */
     private array $testAccountIds = [];
@@ -32,25 +31,19 @@ class AccountLockManagerTest extends TestCase
             $this->markTestSkipped('Redis is not available.');
         }
 
-        $this->lockPrefix = 'account-lock-test-'.getmypid();
-        $this->fencePrefix = 'account-lock-fence-test-'.getmypid();
-
-        config([
-            'account.lock.prefix' => $this->lockPrefix,
-            'account.lock.fence_prefix' => $this->fencePrefix,
-        ]);
+        $this->configureTestLockPrefixes();
 
         $this->testAccountIds = range(1, 13);
 
         $this->redis = $this->app->make('redis')->connection();
-        $this->cleanupTestKeys();
+        $this->cleanupAccountLockRedisKeys();
 
         $this->lockManager = $this->app->make(AccountLockManager::class);
     }
 
     protected function tearDown(): void
     {
-        $this->cleanupTestKeys();
+        $this->cleanupAccountLockRedisKeys();
 
         parent::tearDown();
     }
@@ -251,15 +244,6 @@ class AccountLockManagerTest extends TestCase
     private function lockKey(int $accountId): string
     {
         return $this->lockPrefix.':'.$accountId;
-    }
-
-    private function cleanupTestKeys(): void
-    {
-        foreach ($this->testAccountIds as $accountId) {
-            $this->redis->del("{$this->lockPrefix}:{$accountId}");
-            $this->redis->del("{$this->fencePrefix}:{$accountId}");
-            $this->redis->del("{$this->fencePrefix}:counter:{$accountId}");
-        }
     }
 
     private function redisIsAvailable(): bool
