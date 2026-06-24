@@ -2,28 +2,39 @@
 
 API do kredytowania i obciążania kont.
 
+**Wymagania:** Docker. Do `make` potrzebny jest pakiet `make` (WSL/Ubuntu: `sudo apt install make`). Bez make użyj `./dev` — te same komendy.
+
 ## Uruchomienie
 
 Pierwszy raz:
 
 ```bash
 make setup
+# albo: ./dev setup
 ```
 
 To skopiuje `.env` z przykładu (jeśli go nie masz), zbuduje kontenery, odpali migracje i załaduje dane demo (seed).
 
-Potem wystarczy `make up`. API: http://localhost:8080
+Potem wystarczy `make up` (albo `./dev up`). API: http://localhost:8080
 
 Przydatne:
 
 ```bash
-make down    # stop
-make fresh   # baza od zera + seed
-make test
-make docs    # dokumentacja API → /docs
+make down    # stop          |  ./dev down
+make fresh   # baza + seed   |  ./dev fresh
+make test                   |  ./dev test
+make docs                   |  ./dev docs
 ```
 
-Komendy `make` odpalasz na hoście, w katalogu projektu.
+Komendy odpalasz na hoście, w katalogu projektu (nie w kontenerze).
+
+Bez `make` — to samo przez skrypt:
+
+```bash
+chmod +x dev   # raz, po sklonowaniu
+./dev setup
+./dev up
+```
 
 ## Kontenery
 

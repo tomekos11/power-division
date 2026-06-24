@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+cmd="${1:-}"
+shift || true
+
+case "$cmd" in
+  setup)
+    cp -n .env.example .env 2>/dev/null || true
+    "$0" up
+    "$0" wait
+    "$0" fresh
+  ;;
+  up)
+    chmod 600 docker/pgadmin/pgpass 2>/dev/null || true
+    docker compose up --build -d
+  ;;
+  down)
+    docker compose down
+  ;;
+  fresh)
+    docker compose exec app php artisan migrate:fresh --seed
+  ;;
+  wait)
+    echo "Czekam aż kontener app skończy composer install..."
+    until docker compose exec -T app php artisan --version >/dev/null 2>&1; do sleep 2; done
+    echo "App gotowy."
+  ;;
+  test)
+    docker compose exec app php artisan test
+  ;;
+  logs)
+    docker compose logs -f app web
+  ;;
+  shell)
+    docker compose exec app bash
+  ;;
+  docs)
+    docker compose exec app php artisan scribe:generate
+  ;;
+  "")
+    echo "Użycie: ./dev <setup|up|down|fresh|test|logs|shell|docs>"
+    exit 1
+  ;;
+  *)
+    echo "Nieznana komenda: $cmd"
+    "$0"
+    exit 1
+  ;;
+esac

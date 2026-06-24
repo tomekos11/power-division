@@ -1,4 +1,4 @@
-.PHONY: up down build restart logs shell composer artisan test migrate fresh analyse format health docs
+.PHONY: up down build restart logs shell composer artisan test migrate fresh analyse format health docs wait
 
 up:
 	chmod 600 docker/pgadmin/pgpass 2>/dev/null || true
@@ -37,6 +37,11 @@ migrate:
 fresh:
 	docker compose exec app php artisan migrate:fresh --seed
 
+wait:
+	@echo "Czekam aż kontener app skończy composer install..."
+	@until docker compose exec -T app php artisan --version >/dev/null 2>&1; do sleep 2; done
+	@echo "App gotowy."
+
 analyse:
 	docker compose exec app composer analyse
 
@@ -52,6 +57,7 @@ health:
 setup:
 	cp -n .env.example .env 2>/dev/null || true
 	$(MAKE) up
+	$(MAKE) wait
 	$(MAKE) fresh
 	@echo ""
 	@echo "API:           http://localhost:$${APP_PORT:-8080}"
