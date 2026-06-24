@@ -1,4 +1,4 @@
-.PHONY: up down build restart logs shell composer artisan test migrate fresh analyse format health
+.PHONY: up down build restart logs shell composer artisan test migrate fresh analyse format health docs
 
 up:
 	chmod 600 docker/pgadmin/pgpass 2>/dev/null || true
@@ -43,6 +43,9 @@ analyse:
 format:
 	docker compose exec app composer format
 
+docs:
+	docker compose exec app php artisan scribe:generate
+
 health:
 	curl -s http://localhost:$${APP_PORT:-8080}/api/health | python3 -m json.tool 2>/dev/null || curl -s http://localhost:$${APP_PORT:-8080}/api/health
 
@@ -52,6 +55,7 @@ setup:
 	@echo ""
 	@echo "API:           http://localhost:$${APP_PORT:-8080}"
 	@echo "Health:        http://localhost:$${APP_PORT:-8080}/api/health"
+	@echo "Docs:          http://localhost:$${APP_PORT:-8080}/docs  (make docs)"
 	@echo "pgAdmin:       http://localhost:$${PGADMIN_PORT:-5050}  (admin@local.dev / admin)"
 	@echo "RedisInsight:  http://localhost:$${REDISINSIGHT_PORT:-5540}  (add host: redis:6379)"
 
